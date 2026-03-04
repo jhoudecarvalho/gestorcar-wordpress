@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 
 use CDW\Veiculos\CPT;
 use CDW\Veiculos\Sync;
+use CDW\Veiculos\Tracker;
 
 $post_id = get_the_ID();
 $preco   = get_post_meta($post_id, Sync::META_PRECO, true);
@@ -35,6 +36,12 @@ get_header();
 <article id="post-<?php the_ID(); ?>" <?php post_class('cdw-veiculo-single'); ?>>
     <header class="entry-header">
         <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+        <?php
+        $cliques = (int) get_post_meta($post_id, Tracker::META_CLIQUES, true);
+        if ($cliques > 0) {
+            echo '<span class="cdw-cliques">👁 ' . esc_html(number_format($cliques, 0, ',', '.')) . ' ' . esc_html__('visualizações', 'cdw-veiculos') . '</span>';
+        }
+        ?>
     </header>
 
     <?php if (!empty($imagens)): ?>

@@ -102,6 +102,13 @@ final class CPT {
                 return $plugin_template;
             }
         }
+        $our_taxonomies = [self::TAX_MARCA, self::TAX_MODELO, self::TAX_CATEGORIA, self::TAX_TIPO, self::TAX_COMBUSTIVEL, self::TAX_CAMBIO, self::TAX_ACESSORIO];
+        if (is_tax($our_taxonomies)) {
+            $plugin_template = CDW_VEICULOS_PATH . 'templates/taxonomy-term-veiculos.php';
+            if (file_exists($plugin_template)) {
+                return $plugin_template;
+            }
+        }
         return $template;
     }
 

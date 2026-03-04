@@ -29,6 +29,59 @@ final class Admin {
     public function init(): void {
         add_action('admin_menu', [$this, 'add_menu']);
         add_action('admin_init', [$this, 'handle_actions']);
+        add_filter('manage_veiculo_posts_columns', [$this, 'add_cliques_column']);
+        add_action('manage_veiculo_posts_custom_column', [$this, 'render_cliques_column'], 10, 2);
+        add_filter('manage_edit-veiculo_sortable_columns', [$this, 'sortable_cliques_column']);
+        add_action('pre_get_posts', [$this, 'orderby_cliques']);
+    }
+
+    public function add_cliques_column(array $columns): array {
+        $new = [];
+        foreach ($columns as $key => $label) {
+            $new[$key] = $label;
+            if ($key === 'taxonomy-acessorio_veiculo') {
+                $new['cliques'] = '<span title="' . esc_attr__('Total de visualizações', 'cdw-veiculos') . '">👁 ' . esc_html__('Cliques', 'cdw-veiculos') . '</span>';
+            }
+        }
+        if (!isset($new['cliques'])) {
+            $new['cliques'] = '<span title="' . esc_attr__('Total de visualizações', 'cdw-veiculos') . '">👁 ' . esc_html__('Cliques', 'cdw-veiculos') . '</span>';
+        }
+        return $new;
+    }
+
+    public function render_cliques_column(string $column, int $post_id): void {
+        if ($column !== 'cliques') {
+            return;
+        }
+        $total = (int) get_post_meta($post_id, Tracker::META_CLIQUES, true);
+        $color = match (true) {
+            $total >= 100 => '#1a7f37',
+            $total >= 50  => '#2da44e',
+            $total >= 20  => '#e36209',
+            $total >= 1   => '#0969da',
+            default      => '#6e7781',
+        };
+        printf(
+            '<strong style="color:%s;font-size:14px;">%s</strong>',
+            esc_attr($color),
+            esc_html(number_format($total, 0, ',', '.'))
+        );
+    }
+
+    public function sortable_cliques_column(array $columns): array {
+        $columns['cliques'] = 'cliques';
+        return $columns;
+    }
+
+    public function orderby_cliques(\WP_Query $query): void {
+        if (!is_admin() || !$query->is_main_query()) {
+            return;
+        }
+        if ($query->get('orderby') !== 'cliques') {
+            return;
+        }
+        $query->set('meta_key', Tracker::META_CLIQUES);
+        $query->set('orderby', 'meta_value_num');
     }
 
     public function add_menu(): void {

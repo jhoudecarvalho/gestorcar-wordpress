@@ -52,6 +52,7 @@ require_once CDW_VEICULOS_PATH . 'includes/class-database.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-cpt.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-sync.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-scheduler.php';
+require_once CDW_VEICULOS_PATH . 'includes/class-tracker.php';
 require_once CDW_VEICULOS_PATH . 'admin/class-admin.php';
 
 /**
@@ -61,6 +62,7 @@ add_action('plugins_loaded', function (): void {
     load_plugin_textdomain('cdw-veiculos', false, dirname(plugin_basename(CDW_VEICULOS_PLUGIN_FILE)) . '/languages');
     CPT::get_instance()->register();
     Scheduler::get_instance()->init();
+    Tracker::init();
     if (is_admin()) {
         Admin::get_instance()->init();
     }
