@@ -53,6 +53,7 @@ require_once CDW_VEICULOS_PATH . 'includes/class-cpt.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-sync.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-scheduler.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-tracker.php';
+require_once CDW_VEICULOS_PATH . 'includes/class-rest-api.php';
 require_once CDW_VEICULOS_PATH . 'admin/class-admin.php';
 
 /**
@@ -63,6 +64,7 @@ add_action('plugins_loaded', function (): void {
     CPT::get_instance()->register();
     Scheduler::get_instance()->init();
     Tracker::init();
+    Rest_Api::init();
     if (is_admin()) {
         Admin::get_instance()->init();
     }

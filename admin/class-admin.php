@@ -166,6 +166,7 @@ final class Admin {
         update_option(Database::option_images_include_domain_path(), isset($_POST['cdw_images_include_domain_path']) ? '1' : '0');
         $company_id = isset($_POST['cdw_company_id']) ? sanitize_text_field($_POST['cdw_company_id']) : '';
         update_option(Database::option_company_id(), $company_id === '' || $company_id === '0' ? '' : (string) absint($company_id));
+        update_option(Rest_Api::option_api_key(), sanitize_text_field($_POST['cdw_rest_api_key'] ?? ''));
     }
 
     public function render_settings(): void {

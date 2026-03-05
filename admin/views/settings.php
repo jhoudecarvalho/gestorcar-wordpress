@@ -10,9 +10,11 @@ if (!defined('ABSPATH')) {
 }
 
 use CDW\Veiculos\Database;
+use CDW\Veiculos\Rest_Api;
 use CDW\Veiculos\Scheduler;
 
 $db = Database::get_instance();
+$rest_api_key = get_option(Rest_Api::option_api_key(), '');
 $opts = $db->get_options();
 $frequency = Scheduler::get_instance()->get_frequency();
 $company_id = $db->get_company_id();
@@ -110,6 +112,18 @@ $companies = $db->get_companies_with_vehicle_count(10);
             </tr>
         </table>
 
+        <h2 class="title"><?php esc_html_e('API REST', 'cdw-veiculos'); ?></h2>
+        <table class="form-table">
+            <tr>
+                <th><label for="cdw_rest_api_key"><?php esc_html_e('Chave da API (opcional)', 'cdw-veiculos'); ?></label></th>
+                <td>
+                    <input name="cdw_rest_api_key" id="cdw_rest_api_key" type="text" value="<?php echo esc_attr($rest_api_key); ?>" class="regular-text" autocomplete="off" style="max-width: 360px;" />
+                    <button type="button" id="cdw_gerar_api_key" class="button"><?php esc_html_e('Gerar chave', 'cdw-veiculos'); ?></button>
+                    <p class="description"><?php esc_html_e('Usada no header X-CDW-API-Key para acessar o endpoint', 'cdw-veiculos'); ?> <code><?php echo esc_html(rest_url(Rest_Api::NAMESPACE . '/cliques/resumo')); ?></code>. <?php esc_html_e('Se vazia, o endpoint fica aberto. Após preencher, clique em "Salvar configurações".', 'cdw-veiculos'); ?></p>
+                </td>
+            </tr>
+        </table>
+
         <h2 class="title"><?php esc_html_e('Sincronização automática (WP Cron)', 'cdw-veiculos'); ?></h2>
         <table class="form-table">
             <tr>
@@ -147,4 +161,19 @@ $companies = $db->get_companies_with_vehicle_count(10);
             <pre style="background:#f5f5f5; padding:10px;">*/15 * * * * wget -q -O - "<?php echo esc_url(home_url('wp-cron.php?doing_wp_cron')); ?>" > /dev/null 2>&1</pre>
         </li>
     </ol>
+
+    <script>
+    document.getElementById('cdw_gerar_api_key')?.addEventListener('click', function() {
+        var input = document.getElementById('cdw_rest_api_key');
+        if (!input) return;
+        var arr = new Uint8Array(32);
+        if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+            crypto.getRandomValues(arr);
+        } else {
+            for (var i = 0; i < 32; i++) arr[i] = Math.floor(Math.random() * 256);
+        }
+        var hex = Array.from(arr, function(b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+        input.value = hex;
+    });
+    </script>
 </div>
