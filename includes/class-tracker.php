@@ -41,6 +41,28 @@ final class Tracker {
         $atual = (int) get_post_meta($post_id, self::META_CLIQUES, true);
         update_post_meta($post_id, self::META_CLIQUES, $atual + 1);
 
+        $id_externo    = get_post_meta($post_id, '_cdw_id_externo', true);
+        $company_token = get_option('cdw_veiculos_company_token', '');
+        if ($id_externo !== '' && $company_token !== '') {
+            $headers = ['Content-Type' => 'application/json'];
+            $cookie  = get_option('cdw_veiculos_gestorcar_cookie', '');
+            if ($cookie !== '') {
+                $headers['Cookie'] = 'crm_sessions=' . $cookie;
+            }
+            wp_remote_post(
+                'https://novo.gestorcar.com.br/api/track_view',
+                [
+                    'blocking' => false,
+                    'timeout'  => 5,
+                    'headers'  => $headers,
+                    'body'     => wp_json_encode([
+                        'company_token' => $company_token,
+                        'id_vehicle'    => (string) $id_externo,
+                    ]),
+                ]
+            );
+        }
+
         $expire = time() + self::COOKIE_EXPIRE;
         $path   = '/';
         $domain = '';

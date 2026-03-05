@@ -16,7 +16,7 @@ use WP_REST_Server;
 final class Rest_Api {
 
     public const NAMESPACE = 'cdw-veiculos/v1';
-    private const OPTION_API_KEY = 'cdw_veiculos_rest_api_key';
+    private const OPTION_API_KEY = 'cdw_veiculos_api_key';
     private const HEADER_API_KEY = 'X-CDW-API-Key';
 
     public static function init(): void {

@@ -14,7 +14,6 @@ use CDW\Veiculos\Rest_Api;
 use CDW\Veiculos\Scheduler;
 
 $db = Database::get_instance();
-$rest_api_key = get_option(Rest_Api::option_api_key(), '');
 $opts = $db->get_options();
 $frequency = Scheduler::get_instance()->get_frequency();
 $company_id = $db->get_company_id();
@@ -110,16 +109,30 @@ $companies = $db->get_companies_with_vehicle_count(10);
                     <p class="description" style="margin-top:10px;"><strong><?php esc_html_e('Status na view:', 'cdw-veiculos'); ?></strong> <?php esc_html_e('São importados apenas veículos com id_status = 1 (publicados) na view. Veículos em rascunho ou outros status não entram na sincronização.', 'cdw-veiculos'); ?></p>
                 </td>
             </tr>
+            <tr>
+                <th><?php esc_html_e('Company Token (GestorCar)', 'cdw-veiculos'); ?></th>
+                <td>
+                    <input type="text" name="cdw_veiculos_company_token" value="<?php echo esc_attr(get_option('cdw_veiculos_company_token', '')); ?>" class="regular-text" />
+                    <p class="description"><?php esc_html_e('Token da empresa no GestorCar. Usado para registrar visualizações via API. Encontre em: GestorCar → Configurações da empresa.', 'cdw-veiculos'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="cdw_gestorcar_cookie"><?php esc_html_e('Cookie crm_sessions (opcional)', 'cdw-veiculos'); ?></label></th>
+                <td>
+                    <input type="text" name="cdw_veiculos_gestorcar_cookie" id="cdw_gestorcar_cookie" value="<?php echo esc_attr(get_option('cdw_veiculos_gestorcar_cookie', '')); ?>" class="regular-text" autocomplete="off" />
+                    <p class="description"><?php esc_html_e('Para testes: envio no header Cookie da requisição track_view (ex.: valor de crm_sessions).', 'cdw-veiculos'); ?></p>
+                </td>
+            </tr>
         </table>
 
         <h2 class="title"><?php esc_html_e('API REST', 'cdw-veiculos'); ?></h2>
         <table class="form-table">
             <tr>
-                <th><label for="cdw_rest_api_key"><?php esc_html_e('Chave da API (opcional)', 'cdw-veiculos'); ?></label></th>
+                <th><label for="cdw_api_key"><?php esc_html_e('Chave de API REST', 'cdw-veiculos'); ?></label></th>
                 <td>
-                    <input name="cdw_rest_api_key" id="cdw_rest_api_key" type="text" value="<?php echo esc_attr($rest_api_key); ?>" class="regular-text" autocomplete="off" style="max-width: 360px;" />
-                    <button type="button" id="cdw_gerar_api_key" class="button"><?php esc_html_e('Gerar chave', 'cdw-veiculos'); ?></button>
-                    <p class="description"><?php esc_html_e('Usada no header X-CDW-API-Key para acessar o endpoint', 'cdw-veiculos'); ?> <code><?php echo esc_html(rest_url(Rest_Api::NAMESPACE . '/cliques/resumo')); ?></code>. <?php esc_html_e('Se vazia, o endpoint fica aberto. Após preencher, clique em "Salvar configurações".', 'cdw-veiculos'); ?></p>
+                    <input type="text" id="cdw_api_key" name="cdw_veiculos_api_key" value="<?php echo esc_attr(get_option(Rest_Api::option_api_key(), '')); ?>" class="regular-text" autocomplete="off" />
+                    <button type="button" id="gerar-api-key" class="button button-secondary"><?php esc_html_e('Gerar chave', 'cdw-veiculos'); ?></button>
+                    <p class="description"><?php esc_html_e('Se preenchida, requisições ao endpoint REST precisam enviar o header', 'cdw-veiculos'); ?> <code>X-CDW-API-Key</code>. <?php esc_html_e('Se vazio, endpoint é público.', 'cdw-veiculos'); ?></p>
                 </td>
             </tr>
         </table>
@@ -163,8 +176,8 @@ $companies = $db->get_companies_with_vehicle_count(10);
     </ol>
 
     <script>
-    document.getElementById('cdw_gerar_api_key')?.addEventListener('click', function() {
-        var input = document.getElementById('cdw_rest_api_key');
+    document.getElementById('gerar-api-key')?.addEventListener('click', function() {
+        var input = document.getElementById('cdw_api_key');
         if (!input) return;
         var arr = new Uint8Array(32);
         if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -172,8 +185,7 @@ $companies = $db->get_companies_with_vehicle_count(10);
         } else {
             for (var i = 0; i < 32; i++) arr[i] = Math.floor(Math.random() * 256);
         }
-        var hex = Array.from(arr, function(b) { return ('0' + b.toString(16)).slice(-2); }).join('');
-        input.value = hex;
+        input.value = Array.from(arr).map(function(b) { return ('0' + b.toString(16)).slice(-2); }).join('');
     });
     </script>
 </div>

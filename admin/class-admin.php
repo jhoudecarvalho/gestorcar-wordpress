@@ -28,6 +28,7 @@ final class Admin {
 
     public function init(): void {
         add_action('admin_menu', [$this, 'add_menu']);
+        add_action('admin_init', [$this, 'register_settings']);
         add_action('admin_init', [$this, 'handle_actions']);
         add_filter('manage_veiculo_posts_columns', [$this, 'add_cliques_column']);
         add_action('manage_veiculo_posts_custom_column', [$this, 'render_cliques_column'], 10, 2);
@@ -40,11 +41,11 @@ final class Admin {
         foreach ($columns as $key => $label) {
             $new[$key] = $label;
             if ($key === 'taxonomy-acessorio_veiculo') {
-                $new['cliques'] = '<span title="' . esc_attr__('Total de visualizações', 'cdw-veiculos') . '">👁 ' . esc_html__('Cliques', 'cdw-veiculos') . '</span>';
+                $new['cliques'] = '👁 Cliques';
             }
         }
         if (!isset($new['cliques'])) {
-            $new['cliques'] = '<span title="' . esc_attr__('Total de visualizações', 'cdw-veiculos') . '">👁 ' . esc_html__('Cliques', 'cdw-veiculos') . '</span>';
+            $new['cliques'] = '👁 Cliques';
         }
         return $new;
     }
@@ -62,9 +63,9 @@ final class Admin {
             default      => '#6e7781',
         };
         printf(
-            '<strong style="color:%s;font-size:14px;">%s</strong>',
+            '<strong style="color:%s;font-size:13px;">%s</strong>',
             esc_attr($color),
-            esc_html(number_format($total, 0, ',', '.'))
+            number_format($total, 0, ',', '.')
         );
     }
 
@@ -82,6 +83,12 @@ final class Admin {
         }
         $query->set('meta_key', Tracker::META_CLIQUES);
         $query->set('orderby', 'meta_value_num');
+    }
+
+    public function register_settings(): void {
+        register_setting('cdw_veiculos_sync_group', 'cdw_veiculos_company_token');
+        register_setting('cdw_veiculos_sync_group', 'cdw_veiculos_gestorcar_cookie');
+        register_setting('cdw_veiculos_sync_group', Rest_Api::option_api_key());
     }
 
     public function add_menu(): void {
@@ -166,7 +173,9 @@ final class Admin {
         update_option(Database::option_images_include_domain_path(), isset($_POST['cdw_images_include_domain_path']) ? '1' : '0');
         $company_id = isset($_POST['cdw_company_id']) ? sanitize_text_field($_POST['cdw_company_id']) : '';
         update_option(Database::option_company_id(), $company_id === '' || $company_id === '0' ? '' : (string) absint($company_id));
-        update_option(Rest_Api::option_api_key(), sanitize_text_field($_POST['cdw_rest_api_key'] ?? ''));
+        update_option('cdw_veiculos_company_token', sanitize_text_field($_POST['cdw_veiculos_company_token'] ?? ''));
+        update_option('cdw_veiculos_gestorcar_cookie', sanitize_text_field($_POST['cdw_veiculos_gestorcar_cookie'] ?? ''));
+        update_option(Rest_Api::option_api_key(), sanitize_text_field($_POST['cdw_veiculos_api_key'] ?? ''));
     }
 
     public function render_settings(): void {

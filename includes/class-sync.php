@@ -173,9 +173,6 @@ final class Sync {
             'post_content' => $this->get_post_content($row),
         ]);
         $this->set_meta_and_taxonomies($post_id, $row);
-        if (get_post_meta($post_id, Tracker::META_CLIQUES, true) === '') {
-            update_post_meta($post_id, Tracker::META_CLIQUES, 0);
-        }
         return true;
     }
 
