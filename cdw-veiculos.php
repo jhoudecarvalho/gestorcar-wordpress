@@ -54,6 +54,8 @@ require_once CDW_VEICULOS_PATH . 'includes/class-sync.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-scheduler.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-tracker.php';
 require_once CDW_VEICULOS_PATH . 'includes/class-rest-api.php';
+require_once CDW_VEICULOS_PATH . 'includes/class-contact-form.php';
+require_once CDW_VEICULOS_PATH . 'includes/class-financing-form.php';
 require_once CDW_VEICULOS_PATH . 'admin/class-admin.php';
 
 /**
@@ -65,6 +67,8 @@ add_action('plugins_loaded', function (): void {
     Scheduler::get_instance()->init();
     Tracker::init();
     Rest_Api::init();
+    \CDW_Contact_Form::init();
+    \CDW_Financing_Form::init();
     if (is_admin()) {
         Admin::get_instance()->init();
     }
@@ -92,6 +96,7 @@ register_activation_hook(CDW_VEICULOS_PLUGIN_FILE, function (): void {
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     dbDelta($sql);
     Scheduler::get_instance()->schedule();
+    \CDW_Financing_Form::register_rewrite();
     flush_rewrite_rules();
 });
 

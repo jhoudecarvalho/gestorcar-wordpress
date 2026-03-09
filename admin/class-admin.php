@@ -88,6 +88,8 @@ final class Admin {
     public function register_settings(): void {
         register_setting('cdw_veiculos_sync_group', 'cdw_veiculos_company_token');
         register_setting('cdw_veiculos_sync_group', 'cdw_veiculos_gestorcar_cookie');
+        register_setting('cdw_veiculos_sync_group', 'cdw_veiculos_form_email');
+        register_setting('cdw_veiculos_sync_group', 'cdw_veiculos_whatsapp');
         register_setting('cdw_veiculos_sync_group', Rest_Api::option_api_key());
     }
 
@@ -175,6 +177,8 @@ final class Admin {
         update_option(Database::option_company_id(), $company_id === '' || $company_id === '0' ? '' : (string) absint($company_id));
         update_option('cdw_veiculos_company_token', sanitize_text_field($_POST['cdw_veiculos_company_token'] ?? ''));
         update_option('cdw_veiculos_gestorcar_cookie', sanitize_text_field($_POST['cdw_veiculos_gestorcar_cookie'] ?? ''));
+        update_option('cdw_veiculos_form_email', sanitize_email($_POST['cdw_veiculos_form_email'] ?? ''));
+        update_option('cdw_veiculos_whatsapp', sanitize_text_field($_POST['cdw_veiculos_whatsapp'] ?? ''));
         update_option(Rest_Api::option_api_key(), sanitize_text_field($_POST['cdw_veiculos_api_key'] ?? ''));
     }
 

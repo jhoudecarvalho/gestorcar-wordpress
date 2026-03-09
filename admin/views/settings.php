@@ -125,6 +125,24 @@ $companies = $db->get_companies_with_vehicle_count(10);
             </tr>
         </table>
 
+        <h2 class="title"><?php esc_html_e('Formulário de Proposta', 'cdw-veiculos'); ?></h2>
+        <table class="form-table">
+            <tr>
+                <th><label for="cdw_veiculos_form_email"><?php esc_html_e('E-mail para receber propostas', 'cdw-veiculos'); ?></label></th>
+                <td>
+                    <input type="email" name="cdw_veiculos_form_email" id="cdw_veiculos_form_email" value="<?php echo esc_attr(get_option('cdw_veiculos_form_email', '')); ?>" class="regular-text" />
+                    <p class="description"><?php esc_html_e('Além de enviar para a API, envia um e-mail com os dados do lead para este endereço. (Opcional)', 'cdw-veiculos'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="cdw_veiculos_whatsapp"><?php esc_html_e('Número de WhatsApp', 'cdw-veiculos'); ?></label></th>
+                <td>
+                    <input type="text" name="cdw_veiculos_whatsapp" id="cdw_veiculos_whatsapp" value="<?php echo esc_attr(get_option('cdw_veiculos_whatsapp', '')); ?>" class="regular-text" />
+                    <p class="description"><?php esc_html_e('Usado no botão "ATENDIMENTO POR WHATSAPP". Apenas números (com DDD). Ex.: 5511999999999', 'cdw-veiculos'); ?></p>
+                </td>
+            </tr>
+        </table>
+
         <h2 class="title"><?php esc_html_e('API REST', 'cdw-veiculos'); ?></h2>
         <table class="form-table">
             <tr>
